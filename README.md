@@ -1,53 +1,103 @@
-# Fintrack
+# Fintrack — Personal Finance Dashboard
 
-Fintrack is a modern, premium financial dashboard to help you track your income and expenses, analyze spending habits, and improve your savings rate.
+A modern, role-based financial tracking dashboard built with React 19 and Vite. Track your income, expenses, and savings insights with a clean, responsive UI and smooth animations.
 
-## Features
-
-- **Dashboard Overview**: Get a bird's-eye view of your net balance, total income, and total expenses. Visual monthly trends and exact spending breakdowns are provided with interactive charts.
-- **Transactions Management**: Complete tracking of every dollar. Features include rich filtering (by category, text description, or type), sorting, and immediate visual categorization.
-- **Insights & Analytics**: Deep dive into your lifestyle habits. View your top spending categories, calculated savings rate, and month-over-month performance changes.
-- **Role-Based Access Control (RBAC)**: Switch seamlessly between Admin (full write/delete permissions) and Viewer (read-only mode) roles directly from the top navigation UI. 
-- **Local Persistence**: Powered by Zustand's `persist` middleware, all your transactions and UI states are safely saved to your browser's local storage—data survives any page refresh.
-- **Beautiful Design**: A customized dark theme utilizing CSS variables, responsive grids, and subtle animations aiming to be lightweight, yet feel premium and bespoke.
+---
 
 ## Tech Stack
 
-- **React 19**
-- **Vite**
-- **React-Router-Dom v6** for modular routing (`/`, `/transactions`, `/insights`).
-- **Zustand** for global state management and persistence.
-- **Recharts** for visualizing monthly trends and category breakdowns via dynamic pie/area/bar charts.
-- **Vanilla CSS** for all styles without bringing in heavy utility frameworks.
+| Layer | Technology |
+|---|---|
+| Framework | React 19 + Vite 8 |
+| Routing | React Router DOM v7 |
+| State Management | Zustand v5 with persist middleware |
+| Charts | Recharts v3 |
+| Styling | Plain CSS with custom properties (no Tailwind, no MUI) |
 
-## Setup Instructions
+---
 
-1. **Install dependencies**. Make sure you have Node installed, then run:
+## Features
 
-\`\`\`bash
+- **Dashboard Overview** — Summary cards, balance trend area chart, spending breakdown donut chart, recent transactions
+- **Transactions Page** — Full table with search, category/type filters, sortable columns, pagination (10/page), Add/Edit/Delete (Admin only)
+- **Insights Page** — Top spending category, monthly comparison, savings rate ring, spending by day of week, category breakdown table
+- **Role-Based Access Control** — Admin vs. Viewer roles. Admin can add, edit, delete, and reset data. Viewer has read-only access.
+- **Dark Mode** — Smooth CSS transition between light and dark themes, persisted to localStorage
+- **CSV Export** — Export filtered transactions as a `.csv` file
+- **Responsive Design** — Sidebar on desktop, icon-only sidebar on tablet, bottom tab bar on mobile
+- **Persistent State** — All transactions, role preference, and dark mode survive page refresh via Zustand+localStorage
+
+---
+
+## Setup
+
+```bash
+# Install dependencies
 npm install
-\`\`\`
 
-2. **Start the development server**.
-
-\`\`\`bash
+# Start development server
 npm run dev
-\`\`\`
+```
 
-3. Open your browser and navigate to the localhost port provided (usually `http://localhost:5173`).
+Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
-## Using Role-Based UI (RBAC)
+---
 
-At the top right corner of the dashboard, you'll find a Role Switcher dropdown.
-- **Admin**: Grants access to the "+ Add Transaction" button and allows you to delete existing transactions from the Transactions page.
-- **Viewer**: Hides all mutation controls and displays a read-only floating notice at the bottom to remind you of your current state. 
-*Note: Roles are globally managed using Zustand and enforced throughout the component tree.*
+## Switching Roles
+
+In the top bar you'll see a **Role** dropdown. Select **Admin** or **Viewer**:
+
+- **Admin** — unlocks Add Transaction button, Edit/Delete buttons on each row, and a Reset Data button
+- **Viewer** — hides all mutation controls; a banner on the Transactions page reminds you of the read-only state
+
+Role selection is persisted to localStorage so it survives a page refresh.
+
+---
 
 ## State Management
 
-Fintrack uses **Zustand** instead of scattered, prop-drilled React states.
-1. The `useStore` store handles:
-   - The transactions array (which comes pre-loaded with comprehensive mock data).
-   - The currently active UI role.
-   - Filter terms, search string, active categories, and active sort modes for the Transactions list.
-2. We opted to apply Zustand's `persist` middleware, which wraps the store and automatically serializes the data to `localStorage`. This means your actions persist without needing a backend server database for this iteration.
+Fintrack uses **Zustand** with the `persist` middleware. The store (`src/store/useStore.js`) holds:
+
+- `transactions` — array of transaction objects (pre-loaded with 20 mock entries)
+- `role` — current user role (`"admin"` or `"viewer"`)
+- `filters` — current filter/sort state for the transactions table
+- `darkMode` — boolean, drives the `data-theme` attribute on `<html>`
+
+All state is serialized to `localStorage` under the key `fintrack-store`. Custom transactions added during a session are restored on next visit. The mock data is only the initial seed — once the store is hydrated from localStorage the seed is ignored.
+
+---
+
+## Folder Structure
+
+```
+src/
+├── App.jsx              # Router + theme sync
+├── App.css              # Global CSS variables, resets, layout, animations
+├── main.jsx             # React root
+├── store/
+│   └── useStore.js      # Zustand store (all global state + actions)
+├── data/
+│   └── mockTransactions.js
+├── pages/
+│   ├── Dashboard.jsx / .css
+│   ├── Transactions.jsx / .css
+│   └── Insights.jsx / .css
+└── components/
+    ├── Sidebar.jsx / .css
+    ├── TopBar.jsx / .css
+    ├── SummaryCard.jsx
+    ├── TransactionModal.jsx / .css
+    └── EmptyState.jsx
+```
+
+---
+
+## Live Demo
+
+🔗 _[Deploy link placeholder — add your Vercel/Netlify URL here]_
+
+---
+
+## License
+
+MIT
